@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es" data-tema="claro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Huerta Urbana🌱 - Gestor de Tareas</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌱</text></svg>">
+</head>
+
+<body>
+
+    <div class="carousel-background">
+        <img src="img1.jpg" alt="">
+        <img src="img2.png" alt="">
+        <img src="img3.jpg" alt="">
+        <img src="img4.webp" alt="">
+    </div>
+
+    <header>
+        <h1><a href="#dashboard" class="nav-link">Huerta Urbana🌱</a></h1>
+        <nav>
+            <a href="#formulario" class="nav-link">Registrar Tarea</a>
+            <a href="#lista" class="nav-link">Lista de Tareas</a>
+            <a href="#calendario-vista" class="nav-link">Calendario</a>
+        </nav>
+        <button id="btnCambiarTema" aria-label="Cambiar tema" title="Cambiar tema">
+            <i class="fas fa-sun"></i>
+        </button>
+    </header>
+
+    <main>
+        <section id="dashboard" class="page-section active-section">
+            <h2>¡Bienvenido a tu Asistente de Huerta Urbana! 🌱</h2>
+            <p class="dashboard-intro">
+                Esta herramienta está diseñada para ayudarte a organizar y gestionar todas las tareas de tu huerta,
+                desde la siembra hasta la cosecha. Mantén un registro claro, planifica tus actividades y
+                ¡nunca más olvides cuándo regar tus plantas!
+            </p>
+
+            <div class="dashboard-features">
+                <div class="feature-item">
+                    <i class="fas fa-pencil-alt feature-icon"></i>
+                    <h3>Registra Tareas Fácilmente</h3>
+                    <p>Anota nuevas tareas como siembras, riegos, fertilizaciones y más, con detalles y fechas.</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-tasks feature-icon"></i>
+                    <h3>Visualiza tu Lista</h3>
+                    <p>Consulta todas tus tareas pendientes, fíltralas por categoría y ordénalas por fecha.</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-calendar-check feature-icon"></i>
+                    <h3>Planifica con el Calendario</h3>
+                    <p>Observa tus tareas distribuidas en el mes y filtra por tipo para una mejor organización.</p>
+                </div>
+                 <div class="feature-item">
+                    <i class="fas fa-palette feature-icon"></i>
+                    <h3>Personaliza la Apariencia</h3>
+                    <p>Elige entre un tema claro o oscuro para una experiencia visual a tu gusto.</p>
+                </div>
+            </div>
+
+            <h3>¿Cómo Empezar?</h3>
+            <ol class="how-to-list">
+                <li>Usa el botón <a href="#formulario" class="nav-link inline-link"><i class="fas fa-plus-circle"></i> Registrar Tarea</a> en la navegación (o el enlace rápido de abajo) para añadir tu primera tarea.</li>
+                <li>Completa los detalles: nombre de la planta o actividad, categoría y fecha. ¡No olvides los comentarios si necesitas notas extra!</li>
+                <li>Explora la <a href="#lista" class="nav-link inline-link"><i class="fas fa-list-check"></i> Lista de Tareas</a> para ver todo lo que has registrado.</li>
+                <li>Visita el <a href="#calendario-vista" class="nav-link inline-link"><i class="fas fa-calendar-alt"></i> Calendario</a> para una vista mensual de tus actividades.</li>
+                <li>Haz clic en el icono <i class="fas fa-moon"></i> / <i class="fas fa-sun"></i> en la esquina superior derecha para cambiar el tema.</li>
+            </ol>
+            
+            <p class="dashboard-encouragement">
+                ¡Esperamos que esta herramienta te sea de gran utilidad para cultivar tu propia huerta urbana!
+            </p>
+
+            <div class="dashboard-quick-links">
+                <a href="#formulario" class="button-style nav-link"><i class="fas fa-plus-circle"></i> Nueva Tarea</a>
+                <a href="#lista" class="button-style nav-link"><i class="fas fa-list-check"></i> Ver Tareas</a>
+                <a href="#calendario-vista" class="button-style nav-link"><i class="fas fa-calendar-alt"></i> Ver Calendario</a>
+            </div>
+        </section>
+
+        <section id="formulario" class="page-section">
+            <h2>Registrar / Editar Tarea</h2>
+            <form id="formTarea" novalidate>
+                <input type="hidden" id="idTarea">
+                <div>
+                    <label for="nombre">Nombre de la planta/tarea:</label>
+                    <input type="text" id="nombre" placeholder="Ej: Tomate Cherry, Regar tomates" required minlength="3" aria-describedby="nombreError">
+                    <span class="error-message" id="nombreError" role="alert"></span>
+                </div>
+
+                <div>
+                    <label for="categoria">Categoría de la tarea:</label>
+                    <select id="categoria" required aria-describedby="categoriaError">
+                        <option value="">Selecciona una categoría</option>
+                        <option value="Siembra">Siembra</option>
+                        <option value="Riego">Riego</option>
+                        <option value="Cosecha">Cosecha</option>
+                        <option value="Fertilización">Fertilización</option>
+                        <option value="Poda">Poda</option>
+                        <option value="Tratamiento">Tratamiento (Plagas/Enfermedades)</option>
+                        <option value="Mantenimiento">Mantenimiento General</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                    <span class="error-message" id="categoriaError" role="alert"></span>
+                </div>
+
+                <div>
+                    <label for="fecha">Fecha de la tarea:</label>
+                    <input type="date" id="fecha" required aria-describedby="fechaError">
+                    <span class="error-message" id="fechaError" role="alert"></span>
+                </div>
+
+                <div>
+                    <label for="comentarios">Comentarios (opcional):</label>
+                    <textarea id="comentarios" placeholder="Ej: Usar fertilizante NPK, regar con pulverizador..." rows="3" maxlength="300" aria-describedby="comentariosError"></textarea>
+                    <span class="error-message" id="comentariosError" role="alert"></span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" id="btnSubmitForm">Agregar Tarea</button>
+                    <button type="button" id="btnCancelarEdicion" class="hidden">Cancelar Edición</button>
+                </div>
+            </form>
+        </section>
+
+        <section id="lista" class="page-section">
+            <h2>Lista de Tareas</h2>
+            <div class="filtros-lista">
+                <div>
+                    <label for="filtroCategoriaLista">Filtrar por categoría:</label>
+                    <select id="filtroCategoriaLista">
+                        <option value="todas">Todas</option>
+                        <option value="Siembra">Siembra</option>
+                        <option value="Riego">Riego</option>
+                        <option value="Cosecha">Cosecha</option>
+                        <option value="Fertilización">Fertilización</option>
+                        <option value="Poda">Poda</option>
+                        <option value="Tratamiento">Tratamiento</option>
+                        <option value="Mantenimiento">Mantenimiento General</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="ordenarPorFecha">Ordenar por fecha:</label>
+                    <select id="ordenarPorFecha">
+                        <option value="desc">Más recientes primero</option>
+                        <option value="asc">Más antiguas primero</option>
+                    </select>
+                </div>
+            </div>
+            <ul id="tareasListaUL"></ul>
+        </section>
+
+        <section id="calendario-vista" class="page-section">
+            <h2>Calendario de Tareas</h2>
+            <div class="calendario-controles">
+                <button id="prevMes" title="Mes anterior"><i class="fas fa-chevron-left"></i> Mes Anterior</button>
+                <h3 id="mesAnoActual"></h3>
+                <button id="nextMes" title="Mes siguiente">Mes Siguiente <i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="calendario-filtros">
+                <label for="filtroCategoriaCalendario">Filtrar por categoría:</label>
+                <select id="filtroCategoriaCalendario">
+                    <option value="todas">Todas las categorías</option>
+                    <option value="Siembra">Siembra</option>
+                    <option value="Riego">Riego</option>
+                    <option value="Cosecha">Cosecha</option>
+                    <option value="Fertilización">Fertilización</option>
+                    <option value="Poda">Poda</option>
+                    <option value="Tratamiento">Tratamiento</option>
+                    <option value="Mantenimiento">Mantenimiento General</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            <div id="calendarioGrid"></div>
+            <div id="calendarioLeyenda">
+                <h4>Leyenda:</h4>
+                <span class="leyenda-item siembra">Siembra</span>
+                <span class="leyenda-item riego">Riego</span>
+                <span class="leyenda-item cosecha">Cosecha</span>
+                <span class="leyenda-item fertilizacion">Fertilización</span>
+                <span class="leyenda-item poda">Poda</span>
+                <span class="leyenda-item tratamiento">Tratamiento</span>
+                <span class="leyenda-item mantenimiento">Mantenimiento</span>
+                <span class="leyenda-item otro">Otro</span>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© <span id="currentYear"></span> Huerta Urbana. Desarrollado con 🌱 por [Tu Nombre/Alias].</p>
+    </footer>
+
+    <div id="toastContainer"></div>
+
+    <div id="modalOverlay" class="modal-overlay hidden">
+        <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+            <div class="modal-header">
+                <h3 id="modalTitle" class="modal-title">Título del Modal</h3>
+                <button id="modalCloseButton" class="modal-close-button" aria-label="Cerrar modal" title="Cerrar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="modalBody" class="modal-body">
+            </div>
+            <div id="modalFooter" class="modal-footer">
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

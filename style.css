@@ -59,10 +59,10 @@ body {
     color: var(--color-text);
     transition: background-color 0.3s ease, color 0.3s ease;
     line-height: 1.6;
-    overflow-x: hidden;
+    /* overflow-x: hidden; Se maneja mejor en elementos específicos si es necesario */
     display: flex; 
     flex-direction: column; 
-    min-height: 100%;
+    min-height: 100vh; /* Asegura altura completa del viewport para sticky footer */
 }
 
 .carousel-background {
@@ -267,10 +267,10 @@ section h2 {
 .feature-item p {
     font-size: 0.95rem;
     line-height: 1.5;
-    color: var(--color-text); /* Hereda el color principal */
+    color: var(--color-text); 
 }
 
-#dashboard h3 { /* Para "¿Cómo Empezar?" y otros subtítulos del dashboard */
+#dashboard h3 { 
     font-size: 1.5rem;
     margin-top: 2.5rem;
     margin-bottom: 1rem;
@@ -323,7 +323,6 @@ section h2 {
     gap: 0.5rem;
 }
 
-
 /* Formularios Mejorados */
 form { display: grid; gap: 1.5rem; }
 form div { display: flex; flex-direction: column; gap: 0.4rem; }
@@ -348,6 +347,14 @@ textarea {
     width: 100%;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+input[type="date"] { 
+    cursor: pointer; 
+}
+input[type="date"]::-webkit-calendar-picker-indicator { 
+    cursor: pointer;
+    opacity: 0.7; 
+}
+
 input:focus, select:focus, textarea:focus {
     outline: none;
     border-color: var(--color-accent);
@@ -401,8 +408,8 @@ button:disabled {
     box-shadow: none;
 }
 [data-tema="oscuro"] button:disabled {
-    background-color: #455a64; /* Un gris oscuro azulado */
-    color: #90a4ae; /* Un gris claro para el texto */
+    background-color: #455a64;
+    color: #90a4ae;
 }
 
 #btnCancelarEdicion { background-color: #757575; }
@@ -502,7 +509,7 @@ textarea.invalid:focus {
     font-size: 0.88rem;
     padding: 0.6rem 1rem;
     font-weight: 500;
-    display: inline-flex; /* Para alinear icono y texto */
+    display: inline-flex;
     align-items: center;
     gap: 0.4rem;
 }
@@ -551,9 +558,9 @@ textarea.invalid:focus {
 #calendarioGrid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
+    gap: 6px; 
     border: 1px solid var(--color-border);
-    padding: 8px;
+    padding: 8px; 
     border-radius: var(--border-radius-md);
     background-color: rgba(0,0,0,0.02);
 }
@@ -561,7 +568,7 @@ textarea.invalid:focus {
 
 .calendario-dia-header, .calendario-dia {
     background-color: var(--color-bg);
-    padding: 0.5rem;
+    padding: 0.5rem 0.2rem; /* Ajustado para pantallas más pequeñas */
     text-align: center;
     border-radius: var(--border-radius-sm);
     min-height: 90px;
@@ -580,7 +587,7 @@ textarea.invalid:focus {
     background-color: var(--color-accent-light);
     color: var(--color-accent-dark);
     min-height: auto;
-    padding: 0.6rem 0.5rem;
+    padding: 0.6rem 0.2rem; /* Ajustado */
 }
 [data-tema="oscuro"] .calendario-dia-header {
     background-color: var(--color-accent-dark);
@@ -630,6 +637,18 @@ textarea.invalid:focus {
     border-radius: 50%;
     display: inline-block;
     box-shadow: 0 0 3px rgba(0,0,0,0.2);
+}
+.calendario-dia.con-tareas {
+    outline: 2px dashed var(--color-accent);
+    outline-offset: -2px;
+    cursor: pointer;
+}
+[data-tema="oscuro"] .calendario-dia.con-tareas {
+    outline-color: var(--color-accent);
+}
+.calendario-dia.con-tareas:hover {
+    outline-style: solid;
+    outline-width: 3px;
 }
 
 #calendarioLeyenda {
@@ -720,6 +739,155 @@ footer {
     to { opacity: 0; transform: translateX(100%); }
 }
 
+/* --- Estilos para Modales --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s 0.3s;
+}
+.modal-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease, visibility 0s 0s;
+}
+
+.modal {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    padding: 1.5rem 2rem;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 550px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    transform: scale(0.95) translateY(10px);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+}
+.modal-overlay.visible .modal {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 1rem;
+}
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-accent-dark);
+}
+[data-tema="oscuro"] .modal-title {
+    color: var(--color-accent);
+}
+
+.modal-close-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--color-text-secondary, #777);
+    cursor: pointer;
+    padding: 0.3rem;
+    line-height: 1;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+.modal-close-button:hover {
+    color: var(--color-error);
+    transform: rotate(90deg) scale(1.1);
+}
+
+.modal-body {
+    overflow-y: auto;
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+    font-size: 1rem;
+}
+.modal-body p {
+    margin-bottom: 1rem;
+}
+.modal-body ul {
+    list-style: none;
+    padding: 0;
+}
+.modal-body ul li {
+    padding: 0.7rem 0;
+    border-bottom: 1px dashed var(--color-border);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+}
+.modal-body ul li:last-child {
+    border-bottom: none;
+}
+.modal-body ul li .task-modal-icon {
+    font-size: 1rem;
+    width: 22px; 
+    text-align: center;
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+}
+.modal-body ul li strong {
+    display: block;
+    color: var(--color-accent-dark);
+}
+[data-tema="oscuro"] .modal-body ul li strong {
+    color: var(--color-accent);
+}
+.modal-body ul li small {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+    margin-top: auto;
+}
+.modal-footer button {
+    padding: 0.7rem 1.5rem;
+    font-size: 0.95rem;
+}
+.modal-footer .btn-confirm {
+    background-color: var(--color-error);
+}
+.modal-footer .btn-confirm:hover {
+    background-color: #c0392b;
+}
+.modal-footer .btn-cancel {
+    background-color: #bdc3c7; 
+    color: #333;
+}
+.modal-footer .btn-cancel:hover {
+    background-color: #95a5a6;
+}
+[data-tema="oscuro"] .modal-footer .btn-cancel {
+    background-color: #7f8c8d;
+    color: var(--color-header-text);
+}
+[data-tema="oscuro"] .modal-footer .btn-cancel:hover {
+    background-color: #6c7a7b;
+}
+
 /* Utilidades */
 .hidden { display: none !important; }
 
@@ -743,20 +911,69 @@ footer {
     .form-actions { flex-direction: column; }
     .form-actions button { width: 100%; }
 
-    .dashboard-features { grid-template-columns: 1fr; } /* Una columna en móvil para features */
+    .dashboard-features { grid-template-columns: 1fr; }
 
     .calendario-controles { flex-direction: column; gap: 1rem; }
     .calendario-controles h3 { font-size: 1.4rem; }
-    .calendario-dia { min-height: 70px; padding: 0.4rem 0.2rem; font-size: 0.85rem; }
-    .dia-numero { font-size: 0.85rem; width: 24px; height: 24px; }
-    .tareas-del-dia { font-size: 0.7rem; max-width: 90%; }
-    .tarea-punto { width: 7px; height: 7px; }
+
+    /* Ajustes para el calendario en móvil */
+    #calendarioGrid {
+        gap: 4px; /* Reducir el gap entre celdas del grid */
+        padding: 4px; /* Reducir el padding del contenedor del grid */
+    }
+    .calendario-dia-header, .calendario-dia {
+        min-height: 70px; 
+        padding: 0.4rem 0.1rem; /* Reducir padding horizontal de las celdas */
+        font-size: 0.8rem; /* Reducir un poco la fuente base de la celda */
+    }
+    .dia-numero { 
+        font-size: 0.85rem; 
+        width: 24px; 
+        height: 24px; 
+        margin-bottom: 0.3rem;
+    }
+    .tareas-del-dia { 
+        font-size: 0.7rem; 
+        max-width: 95%; 
+        gap: 2px; 
+    }
+    .tarea-punto { 
+        width: 6px; 
+        height: 6px; 
+    }
+}
+
+@media (max-width: 600px) { 
+    .modal {
+        width: 95%;
+        padding: 1.2rem;
+        max-height: 90vh;
+    }
+    .modal-title {
+        font-size: 1.3rem;
+    }
+    .modal-body {
+        font-size: 0.95rem;
+    }
+    .modal-footer {
+        flex-direction: column-reverse;
+    }
+    .modal-footer button {
+        width: 100%;
+    }
 }
 
 @media (max-width: 480px) {
     header h1 { font-size: 1.3rem; }
     header nav a { font-size: 0.8rem; padding: 0.3rem; }
-    main { padding-top: 9rem; }
+    main { 
+        padding-top: 9rem; 
+        padding-left: 0.5rem; 
+        padding-right: 0.5rem;
+    } 
+    .page-section {
+        padding: 1.2rem;
+    }
 
     .filtros-lista, .calendario-filtros {
         flex-direction: column;
@@ -767,4 +984,28 @@ footer {
     
     #toastContainer { bottom: 15px; right: 15px; left: 15px; width: auto; }
     .toast { min-width: auto; }
+
+    /* Ajustes más agresivos para el calendario en móviles muy pequeños */
+    #calendarioGrid {
+        gap: 2px; 
+        padding: 2px; 
+    }
+    .calendario-dia-header, .calendario-dia {
+        padding: 0.3rem 0.1rem; /* Padding mínimo en las celdas */
+        font-size: 0.7rem; /* Reducir fuente si es necesario para los nombres de día */
+        min-height: 60px; 
+    }
+    .dia-numero {
+        font-size: 0.75rem; /* Números de día más pequeños */
+        width: 20px;
+        height: 20px;
+        margin-bottom: 0.2rem;
+    }
+    .tareas-del-dia {
+        gap: 1px; /* Puntos de tarea más juntos */
+    }
+    .tarea-punto {
+        width: 5px;
+        height: 5px;
+    }
 }

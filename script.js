@@ -1,6 +1,13 @@
-// script.js
 document.addEventListener("DOMContentLoaded", () => {
-    // Elementos del DOM - Formularios
+
+    const seccionDashboard = document.getElementById("dashboard");
+    const seccionFormulario = document.getElementById("formulario-seccion");
+    const seccionLista = document.getElementById("lista-seccion");
+
+    const btnDashboard = document.getElementById("btnDashboard");
+    const btnFormulario = document.getElementById("btnFormulario");
+    const btnLista = document.getElementById("btnLista");
+
     const formTarea = document.getElementById("formTarea");
     const inputIdTarea = document.getElementById("idTarea");
     const inputNombre = document.getElementById("nombre");
@@ -9,413 +16,233 @@ document.addEventListener("DOMContentLoaded", () => {
     const textareaComentarios = document.getElementById("comentarios");
     const btnSubmitForm = document.getElementById("btnSubmitForm");
     const btnCancelarEdicion = document.getElementById("btnCancelarEdicion");
+    const formFeedback = document.getElementById("form-feedback");
 
-    // Elementos del DOM - Navegación y Secciones
-    const navLinks = document.querySelectorAll(".nav-link");
-    const pageSections = document.querySelectorAll(".page-section");
-
-    // Elementos del DOM - Tema
-    const btnCambiarTema = document.getElementById("btnCambiarTema");
-    const htmlElement = document.documentElement;
-
-    // Elementos del DOM - Lista de Tareas
     const tareasListaUL = document.getElementById("tareasListaUL");
     const filtroCategoriaListaSelect = document.getElementById("filtroCategoriaLista");
     const ordenarPorFechaSelect = document.getElementById("ordenarPorFecha");
 
-    // Elementos del DOM - Calendario
-    const calendarioGrid = document.getElementById("calendarioGrid");
-    const mesAnoActualEl = document.getElementById("mesAnoActual");
-    const prevMesBtn = document.getElementById("prevMes");
-    const nextMesBtn = document.getElementById("nextMes");
-    const filtroCategoriaCalendarioSelect = document.getElementById("filtroCategoriaCalendario");
-
-    // Elementos del DOM - Footer y Toasts
     const currentYearSpan = document.getElementById("currentYear");
-    const toastContainer = document.getElementById("toastContainer");
 
-    // --- Estado de la Aplicación ---
-    let tareas = JSON.parse(localStorage.getItem("tareasHuertaUrbanaV2")) || [];
-    let editandoId = null;
-    let fechaCalendarioActual = new Date();
-    let filtroCategoriaCalendarioActual = "todas";
-    let filtroCategoriaListaActual = "todas";
-    let ordenListaActual = "desc";
+    function mostrarSeccion(seccionAMostrar) {
+        seccionDashboard.style.display = 'none';
+        seccionFormulario.style.display = 'none';
+        seccionLista.style.display = 'none';
 
-    // --- Inicialización del Año en Footer ---
-    if (currentYearSpan) {
-        currentYearSpan.textContent = new Date().getFullYear();
+        seccionAMostrar.style.display = 'block';
     }
 
-    // --- Lógica de Navegación SPA ---
-    function mostrarSeccion(idSeccionTarget) {
-        let idSeccionReal = idSeccionTarget;
-        // Si el id no existe, mostrar dashboard
-        if (!document.getElementById(idSeccionTarget)) {
-            idSeccionReal = "dashboard";
-        }
-
-        pageSections.forEach(section => {
-            section.classList.toggle("active-section", section.id === idSeccionReal);
-        });
-        navLinks.forEach(link => {
-            link.classList.toggle("active-nav-link", link.hash === `#${idSeccionReal}` && link.closest('header nav, .dashboard-quick-links'));
-        });
-        
-        // Actualizar hash solo si es diferente y la sección es válida
-        if (window.location.hash !== `#${idSeccionReal}`) {
-             window.location.hash = idSeccionReal;
-        }
-       
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    navLinks.forEach(link => {
-        link.addEventListener("click", (e) => {
-            e.preventDefault();
-            const targetId = link.hash.substring(1);
-            mostrarSeccion(targetId);
-        });
+    btnDashboard.addEventListener('click', (e) => {
+        e.preventDefault();
+        mostrarSeccion(seccionDashboard);
     });
 
-    const hashInicial = window.location.hash.substring(1);
-    mostrarSeccion(hashInicial || "dashboard"); // Si no hay hash, o el hash no es válido, va a dashboard
-
-    window.addEventListener('hashchange', () => {
-        const nuevoHash = window.location.hash.substring(1);
-        mostrarSeccion(nuevoHash || "dashboard");
+    btnFormulario.addEventListener('click', () => {
+        resetearFormulario();
+        mostrarSeccion(seccionFormulario);
     });
 
-
-    // --- Lógica de Temas ---
-    function aplicarTema(tema) {
-        htmlElement.setAttribute("data-tema", tema);
-        localStorage.setItem("temaHuertaPreferidoV2", tema);
-        btnCambiarTema.innerHTML = tema === "oscuro" ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-    }
-
-    const temaGuardado = localStorage.getItem("temaHuertaPreferidoV2");
-    const prefiereOscuro = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    aplicarTema(temaGuardado || (prefiereOscuro ? "oscuro" : "claro"));
-
-    btnCambiarTema.addEventListener("click", () => {
-        const temaActual = htmlElement.getAttribute("data-tema");
-        aplicarTema(temaActual === "claro" ? "oscuro" : "claro");
+    btnLista.addEventListener('click', () => {
+        mostrarSeccion(seccionLista);
+        renderizarTareas();
     });
 
-    // --- Gestión de Toasts/Snackbars ---
-    function showToast(message, type = "info", duration = 3000) {
-        const toast = document.createElement("div");
-        toast.classList.add("toast", type);
-        toast.textContent = message;
-        toast.setAttribute('role', 'alert');
-        toast.setAttribute('aria-live', 'assertive');
-        toastContainer.appendChild(toast);
-        setTimeout(() => toast.remove(), duration);
+    const dashboardBackground = document.getElementById('dashboard-background');
+    if (dashboardBackground) {
+        const imagenes = ['img1.jpg', 'img2.png', 'img3.jpg', 'img4.webp'];
+        let imagenActual = 0;
+
+        function cambiarImagenFondo() {
+            imagenActual = (imagenActual + 1) % imagenes.length;
+            dashboardBackground.style.backgroundImage = `url('${imagenes[imagenActual]}')`;
+        }
+        cambiarImagenFondo();
+        setInterval(cambiarImagenFondo, 5000);
     }
 
-    // --- Funciones de Validación de Formulario ---
-    function mostrarError(inputElement, mensaje) {
-        const errorElementId = inputElement.getAttribute("aria-describedby");
-        if (errorElementId) {
-            const errorElement = document.getElementById(errorElementId);
-            if(errorElement){
-                errorElement.textContent = mensaje;
-                errorElement.classList.add("visible");
-            }
-        }
-        inputElement.classList.add("invalid");
-    }
+    // --- LÓGICA DE LA APP ---
+    let tareas = JSON.parse(localStorage.getItem("tareasHuerta")) || [];
 
-    function limpiarError(inputElement) {
-        const errorElementId = inputElement.getAttribute("aria-describedby");
-        if (errorElementId) {
-            const errorElement = document.getElementById(errorElementId);
-            if(errorElement) {
-                errorElement.textContent = "";
-                errorElement.classList.remove("visible");
-            }
-        }
-        inputElement.classList.remove("invalid");
-    }
-    
-    function limpiarTodosLosErrores() {
-        [inputNombre, selectCategoria, inputFecha, textareaComentarios].forEach(el => {
-            if(el) limpiarError(el); // Comprobar si el elemento existe
-        });
-    }
-
-    function validarFormulario() {
-        let esValido = true;
-        limpiarTodosLosErrores(); 
-
-        if (inputNombre.value.trim() === "") {
-            mostrarError(inputNombre, "El nombre es obligatorio.");
-            esValido = false;
-        } else if (inputNombre.value.trim().length < 3) {
-            mostrarError(inputNombre, "El nombre debe tener al menos 3 caracteres.");
-            esValido = false;
-        }
-
-        if (selectCategoria.value === "") {
-            mostrarError(selectCategoria, "Debes seleccionar una categoría.");
-            esValido = false;
-        }
-
-        if (inputFecha.value === "") {
-            mostrarError(inputFecha, "La fecha es obligatoria.");
-            esValido = false;
-        }
-        
-        if (textareaComentarios.value.trim().length > 300) {
-            mostrarError(textareaComentarios, "Los comentarios no deben exceder los 300 caracteres.");
-            esValido = false;
-        }
-
-        btnSubmitForm.disabled = !esValido;
-        return esValido;
-    }
-    
-    [inputNombre, textareaComentarios].forEach(el => el.addEventListener('input', () => {
-        limpiarError(el);
-        validarFormulario();
-    }));
-    [selectCategoria, inputFecha].forEach(el => el.addEventListener('change', () => {
-        limpiarError(el);
-        validarFormulario();
-    }));
-
-
-    // --- Gestión de Tareas (CRUD) ---
     function guardarTareas() {
-        localStorage.setItem("tareasHuertaUrbanaV2", JSON.stringify(tareas));
+        localStorage.setItem("tareasHuerta", JSON.stringify(tareas));
     }
 
-    function renderizarTareasLista() {
-        tareasListaUL.innerHTML = "";
-        let tareasFiltradasYOrdenadas = [...tareas];
+    function mostrarFeedback(mensaje, tipo = 'success') {
+        formFeedback.textContent = mensaje;
+        formFeedback.className = tipo === 'success' ? 'feedback-success' : 'feedback-error';
+        setTimeout(() => {
+            formFeedback.textContent = '';
+            formFeedback.className = '';
+        }, 3000);
+    }
 
-        if (filtroCategoriaListaActual !== "todas") {
-            tareasFiltradasYOrdenadas = tareasFiltradasYOrdenadas.filter(t => t.categoria === filtroCategoriaListaActual);
+    function renderizarTareas() {
+        tareasListaUL.innerHTML = "";
+        let tareasParaMostrar = [...tareas];
+
+        const categoriaFiltro = filtroCategoriaListaSelect.value;
+        if (categoriaFiltro !== "todas") {
+            tareasParaMostrar = tareasParaMostrar.filter(tarea => tarea.categoria === categoriaFiltro);
         }
-        tareasFiltradasYOrdenadas.sort((a, b) => {
+
+        const orden = ordenarPorFechaSelect.value;
+        tareasParaMostrar.sort((a, b) => {
             const fechaA = new Date(a.fecha);
             const fechaB = new Date(b.fecha);
-            return ordenListaActual === "asc" ? fechaA - fechaB : fechaB - fechaA;
+
+            if (orden === "desc") { 
+                return fechaA - fechaB;
+            } else {
+                return fechaB - fechaA;
+            }
         });
 
-        if (tareasFiltradasYOrdenadas.length === 0) {
-            const liVacio = document.createElement("li");
-            liVacio.textContent = "No hay tareas registradas que coincidan con los filtros.";
-            liVacio.style.textAlign = "center";
-            liVacio.style.padding = "2rem";
-            liVacio.style.borderLeftColor = "transparent"; // Evitar borde de color
-            tareasListaUL.appendChild(liVacio);
+        if (tareasParaMostrar.length === 0) {
+            tareasListaUL.innerHTML = "<li class='empty-list-message'>No hay tareas para mostrar. ¡Agrega una nueva!</li>";
             return;
         }
 
-        tareasFiltradasYOrdenadas.forEach(tarea => {
+        tareasParaMostrar.forEach(tarea => {
             const li = document.createElement("li");
-            const categoriaClass = tarea.categoria.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, '');
-            const coloresCategorias = {
-                "siembra": "#4CAF50", "riego": "#2196F3", "cosecha": "#FF9800",
-                "fertilizacion": "#9C27B0", "poda": "#795548", "tratamiento": "#F44336",
-                "mantenimiento": "#607D8B", "otro": "#FFC107"
-            };
-            li.style.borderLeft = `5px solid ${coloresCategorias[categoriaClass] || 'var(--color-accent)'}`;
-
-            let comentariosHTML = "";
-            if (tarea.comentarios && tarea.comentarios.trim() !== "") {
-                comentariosHTML = `<p class="task-comentarios"><strong>Comentarios:</strong> ${tarea.comentarios.replace(/\n/g, '<br>')}</p>`;
-            }
-            
-            const fechaTarea = new Date(tarea.fecha); // La fecha ya está como YYYY-MM-DD
-            const fechaFormateada = new Date(fechaTarea.getUTCFullYear(), fechaTarea.getUTCMonth(), fechaTarea.getUTCDate()).toLocaleDateString('es-ES', {
-                year: 'numeric', month: 'long', day: 'numeric'
+            li.setAttribute('data-categoria', tarea.categoria);
+            const fechaCorrecta = new Date(tarea.fecha + 'T00:00:00');
+            const fechaFormateada = fechaCorrecta.toLocaleDateString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
             });
-
             li.innerHTML = `
                 <strong>${tarea.nombre}</strong>
                 <div class="task-meta">
                     <span>Categoría: <strong>${tarea.categoria}</strong></span>
                     <span>Fecha: <strong>${fechaFormateada}</strong></span>
                 </div>
-                ${comentariosHTML}
+                ${tarea.comentarios ? `<p class="task-comentarios">${tarea.comentarios}</p>` : ''}
                 <div class="task-actions">
-                    <button class="btn-editar" data-id="${tarea.id}" title="Editar tarea"><i class="fas fa-edit"></i> Editar</button>
-                    <button class="btn-eliminar" data-id="${tarea.id}" title="Eliminar tarea"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                    <button class="btn-editar" data-id="${tarea.id}">Editar</button>
+                    <button class="btn-eliminar" data-id="${tarea.id}">Eliminar</button>
                 </div>
             `;
-            li.querySelector(".btn-editar").addEventListener("click", () => cargarTareaParaEditar(tarea.id));
-            li.querySelector(".btn-eliminar").addEventListener("click", () => eliminarTarea(tarea.id));
             tareasListaUL.appendChild(li);
         });
     }
 
-    filtroCategoriaListaSelect.addEventListener("change", (e) => {
-        filtroCategoriaListaActual = e.target.value;
-        renderizarTareasLista();
-    });
-    ordenarPorFechaSelect.addEventListener("change", (e) => {
-        ordenListaActual = e.target.value;
-        renderizarTareasLista();
-    });
+    function validarFormulario() {
+        let esValido = true;
+        document.querySelectorAll('.error-message').forEach(el => {
+            el.textContent = '';
+            el.style.display = 'none';
+        });
+        document.querySelectorAll('form input.invalid, form select.invalid').forEach(el => el.classList.remove('invalid'));
+
+        if (inputNombre.value.trim().length < 3) {
+            const errorSpan = document.getElementById('nombreError');
+            errorSpan.textContent = 'El nombre debe tener al menos 3 caracteres.';
+            errorSpan.style.display = 'block';
+            inputNombre.classList.add('invalid');
+            esValido = false;
+        }
+        if (selectCategoria.value === "") {
+            const errorSpan = document.getElementById('categoriaError');
+            errorSpan.textContent = 'Debes seleccionar una categoría.';
+            errorSpan.style.display = 'block';
+            selectCategoria.classList.add('invalid');
+            esValido = false;
+        }
+        if (inputFecha.value === "") {
+            const errorSpan = document.getElementById('fechaError');
+            errorSpan.textContent = 'La fecha es obligatoria.';
+            errorSpan.style.display = 'block';
+            inputFecha.classList.add('invalid');
+            esValido = false;
+        }
+        return esValido;
+    }
+
+    function resetearFormulario() {
+        formTarea.reset();
+        inputIdTarea.value = '';
+        btnSubmitForm.textContent = "Guardar Tarea";
+        btnCancelarEdicion.classList.add("hidden");
+        document.querySelectorAll('.error-message').forEach(el => {
+            el.textContent = '';
+            el.style.display = 'none';
+        });
+        document.querySelectorAll('form input.invalid, form select.invalid').forEach(el => el.classList.remove('invalid'));
+        formFeedback.textContent = '';
+        formFeedback.className = '';
+    }
 
     formTarea.addEventListener("submit", (e) => {
         e.preventDefault();
         if (!validarFormulario()) {
-            showToast("Por favor, corrige los errores en el formulario.", "error");
-            const primerError = formTarea.querySelector('.invalid');
-            if (primerError) primerError.focus();
+            mostrarFeedback("Por favor, corrige los errores.", 'error');
             return;
         }
-
+        const id = inputIdTarea.value;
         const tareaData = {
             nombre: inputNombre.value.trim(),
             categoria: selectCategoria.value,
-            fecha: inputFecha.value, // YYYY-MM-DD
+            fecha: inputFecha.value,
             comentarios: textareaComentarios.value.trim()
         };
-
-        let mensajeExito = "";
-        if (editandoId) {
-            const index = tareas.findIndex(t => t.id === editandoId);
+        if (id) {
+            const index = tareas.findIndex(t => t.id === parseInt(id));
             if (index > -1) {
-                tareas[index] = { ...tareas[index], ...tareaData };
+                tareas[index] = {
+                    ...tareas[index], ...tareaData,
+                    id: parseInt(id)
+                };
+                mostrarFeedback("Tarea actualizada con éxito.", 'success');
             }
-            mensajeExito = "Tarea actualizada exitosamente.";
         } else {
-            const nuevaTarea = { id: Date.now(), ...tareaData };
+            const nuevaTarea = {
+                id: Date.now(), ...tareaData
+            };
             tareas.push(nuevaTarea);
-            mensajeExito = "Tarea agregada exitosamente.";
+            mostrarFeedback("Tarea agregada con éxito.", 'success');
         }
-
         guardarTareas();
-        renderizarTareasLista();
-        renderizarCalendario();
-        showToast(mensajeExito, "success");
-        
         resetearFormulario();
-        inputNombre.focus();
-    });
-    
-    function resetearFormulario() {
-        formTarea.reset();
-        editandoId = null;
-        btnSubmitForm.textContent = "Agregar Tarea";
-        btnSubmitForm.disabled = true;
-        btnCancelarEdicion.classList.add("hidden");
-        limpiarTodosLosErrores();
-    }
-
-    btnCancelarEdicion.addEventListener("click", () => {
-        resetearFormulario();
-        inputNombre.focus();
+        mostrarSeccion(seccionLista);
+        renderizarTareas();
     });
 
-    function cargarTareaParaEditar(id) {
-        const tarea = tareas.find(t => t.id === id);
-        if (!tarea) return;
-
-        editandoId = tarea.id;
-        inputNombre.value = tarea.nombre;
-        selectCategoria.value = tarea.categoria;
-        inputFecha.value = tarea.fecha; // El input date espera YYYY-MM-DD
-        textareaComentarios.value = tarea.comentarios || "";
-
-        btnSubmitForm.textContent = "Actualizar Tarea";
-        btnSubmitForm.disabled = false;
-        btnCancelarEdicion.classList.remove("hidden");
-        limpiarTodosLosErrores();
-        mostrarSeccion("formulario");
-        inputNombre.focus();
-    }
-
-    function eliminarTarea(id) {
-        if (confirm("¿Estás seguro de eliminar esta tarea? Esta acción no se puede deshacer.")) {
-            tareas = tareas.filter(t => t.id !== id);
-            guardarTareas();
-            renderizarTareasLista();
-            renderizarCalendario();
-            showToast("Tarea eliminada.", "info");
-            if (editandoId === id) resetearFormulario();
-        }
-    }
-
-    // --- Lógica del Calendario ---
-    const diasSemana = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
-    function renderizarCalendario() {
-        calendarioGrid.innerHTML = "";
-        const primerDiaDelMes = new Date(fechaCalendarioActual.getFullYear(), fechaCalendarioActual.getMonth(), 1);
-        const ultimoDiaDelMes = new Date(fechaCalendarioActual.getFullYear(), fechaCalendarioActual.getMonth() + 1, 0);
-        mesAnoActualEl.textContent = fechaCalendarioActual.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase());
-
-        diasSemana.forEach(dia => {
-            const diaHeaderEl = document.createElement("div");
-            diaHeaderEl.classList.add("calendario-dia-header");
-            diaHeaderEl.textContent = dia;
-            calendarioGrid.appendChild(diaHeaderEl);
-        });
-
-        for (let i = 0; i < primerDiaDelMes.getDay(); i++) { // getDay() es 0 para Domingo, 1 para Lunes...
-            const diaVacioEl = document.createElement("div");
-            diaVacioEl.classList.add("calendario-dia", "otro-mes");
-            calendarioGrid.appendChild(diaVacioEl);
-        }
-
-        for (let i = 1; i <= ultimoDiaDelMes.getDate(); i++) {
-            const diaEl = document.createElement("div");
-            diaEl.classList.add("calendario-dia");
-            const fechaIteracion = new Date(fechaCalendarioActual.getFullYear(), fechaCalendarioActual.getMonth(), i);
-
-            const diaNumeroEl = document.createElement("span");
-            diaNumeroEl.classList.add("dia-numero");
-            diaNumeroEl.textContent = i;
-            diaEl.appendChild(diaNumeroEl);
-
-            const hoy = new Date();
-            if (fechaIteracion.toDateString() === hoy.toDateString()) {
-                diaEl.classList.add("hoy");
+    tareasListaUL.addEventListener("click", (e) => {
+        const target = e.target;
+        if (target.classList.contains("btn-editar")) {
+            const id = parseInt(target.dataset.id);
+            const tareaAEditar = tareas.find(t => t.id === id);
+            if (tareaAEditar) {
+                inputIdTarea.value = tareaAEditar.id;
+                inputNombre.value = tareaAEditar.nombre;
+                selectCategoria.value = tareaAEditar.categoria;
+                inputFecha.value = tareaAEditar.fecha;
+                textareaComentarios.value = tareaAEditar.comentarios;
+                btnSubmitForm.textContent = "Actualizar Tarea";
+                btnCancelarEdicion.classList.remove("hidden");
+                mostrarSeccion(seccionFormulario);
             }
-
-            const tareasDelDiaDiv = document.createElement("div");
-            tareasDelDiaDiv.classList.add("tareas-del-dia");
-            const tareasParaEsteDia = tareas.filter(tarea => {
-                // Comparamos fechas como YYYY-MM-DD para evitar problemas de zona horaria/hora
-                const fechaTareaObjeto = new Date(tarea.fecha + "T00:00:00"); // Asegurar que es medianoche local
-                return fechaTareaObjeto.getFullYear() === fechaIteracion.getFullYear() &&
-                       fechaTareaObjeto.getMonth() === fechaIteracion.getMonth() &&
-                       fechaTareaObjeto.getDate() === fechaIteracion.getDate() &&
-                       (filtroCategoriaCalendarioActual === "todas" || tarea.categoria === filtroCategoriaCalendarioActual);
-            });
-
-            tareasParaEsteDia.forEach(tarea => {
-                const puntoTarea = document.createElement("span");
-                const categoriaClass = tarea.categoria.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, '');
-                puntoTarea.classList.add("tarea-punto", categoriaClass);
-                puntoTarea.title = `${tarea.nombre} (${tarea.categoria})`;
-                tareasDelDiaDiv.appendChild(puntoTarea);
-            });
-            diaEl.appendChild(tareasDelDiaDiv);
-            calendarioGrid.appendChild(diaEl);
         }
+        if (target.classList.contains("btn-eliminar")) {
+            const id = parseInt(target.dataset.id);
+            if (confirm("¿Estás seguro de que quieres eliminar esta tarea?")) {
+                tareas = tareas.filter(t => t.id !== id);
+                guardarTareas();
+                renderizarTareas();
+                if (parseInt(inputIdTarea.value) === id) {
+                    resetearFormulario();
+                }
+            }
+        }
+    });
+
+    btnCancelarEdicion.addEventListener("click", resetearFormulario);
+    filtroCategoriaListaSelect.addEventListener("change", renderizarTareas);
+    ordenarPorFechaSelect.addEventListener("change", renderizarTareas);
+
+    if (currentYearSpan) {
+        currentYearSpan.textContent = new Date().getFullYear();
     }
-
-    prevMesBtn.addEventListener("click", () => {
-        fechaCalendarioActual.setMonth(fechaCalendarioActual.getMonth() - 1);
-        renderizarCalendario();
-    });
-    nextMesBtn.addEventListener("click", () => {
-        fechaCalendarioActual.setMonth(fechaCalendarioActual.getMonth() + 1);
-        renderizarCalendario();
-    });
-    filtroCategoriaCalendarioSelect.addEventListener("change", (e) => {
-        filtroCategoriaCalendarioActual = e.target.value;
-        renderizarCalendario();
-    });
-
-    // --- Inicialización General ---
-    renderizarTareasLista();
-    renderizarCalendario();
-    btnSubmitForm.disabled = true; 
+    mostrarSeccion(seccionDashboard);
 });

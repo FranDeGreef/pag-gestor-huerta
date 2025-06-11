@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const textareaComentarios = document.getElementById("comentarios");
     const btnSubmitForm = document.getElementById("btnSubmitForm");
     const btnCancelarEdicion = document.getElementById("btnCancelarEdicion");
-    const formFeedback = document.getElementById("form-feedback");
 
     const tareasListaUL = document.getElementById("tareasListaUL");
     const filtroCategoriaListaSelect = document.getElementById("filtroCategoriaLista");
@@ -60,20 +59,10 @@ document.addEventListener("DOMContentLoaded", () => {
         setInterval(cambiarImagenFondo, 5000);
     }
 
-    // --- LÓGICA DE LA APP ---
     let tareas = JSON.parse(localStorage.getItem("tareasHuerta")) || [];
 
     function guardarTareas() {
         localStorage.setItem("tareasHuerta", JSON.stringify(tareas));
-    }
-
-    function mostrarFeedback(mensaje, tipo = 'success') {
-        formFeedback.textContent = mensaje;
-        formFeedback.className = tipo === 'success' ? 'feedback-success' : 'feedback-error';
-        setTimeout(() => {
-            formFeedback.textContent = '';
-            formFeedback.className = '';
-        }, 3000);
     }
 
     function renderizarTareas() {
@@ -90,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const fechaA = new Date(a.fecha);
             const fechaB = new Date(b.fecha);
 
-            if (orden === "desc") { 
+            if (orden === "desc") {
                 return fechaA - fechaB;
             } else {
                 return fechaB - fechaA;
@@ -169,14 +158,11 @@ document.addEventListener("DOMContentLoaded", () => {
             el.style.display = 'none';
         });
         document.querySelectorAll('form input.invalid, form select.invalid').forEach(el => el.classList.remove('invalid'));
-        formFeedback.textContent = '';
-        formFeedback.className = '';
     }
 
     formTarea.addEventListener("submit", (e) => {
         e.preventDefault();
         if (!validarFormulario()) {
-            mostrarFeedback("Por favor, corrige los errores.", 'error');
             return;
         }
         const id = inputIdTarea.value;
@@ -193,14 +179,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     ...tareas[index], ...tareaData,
                     id: parseInt(id)
                 };
-                mostrarFeedback("Tarea actualizada con éxito.", 'success');
             }
         } else {
             const nuevaTarea = {
                 id: Date.now(), ...tareaData
             };
             tareas.push(nuevaTarea);
-            mostrarFeedback("Tarea agregada con éxito.", 'success');
         }
         guardarTareas();
         resetearFormulario();
@@ -236,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
-
+    
     btnCancelarEdicion.addEventListener("click", resetearFormulario);
     filtroCategoriaListaSelect.addEventListener("change", renderizarTareas);
     ordenarPorFechaSelect.addEventListener("change", renderizarTareas);

@@ -5,7 +5,7 @@
     --color-text: #4d4036;
     --color-text-secondary: #8c7d70;
     --color-accent: #4caf50;
-    --color-accent-dark: #388e3c; 
+    --color-accent-dark: #388e3c;
     --color-border: #d0e0d3;
     --color-shadow: rgba(77, 64, 54, 0.1);
     --color-error: #c0392b;
@@ -211,7 +211,7 @@ textarea {
     border-radius: var(--border-radius-md);
     font-size: 1rem;
     font-family: inherit;
-    background-color: #ffffff; 
+    background-color: #ffffff;
     color: var(--color-text);
     width: 100%;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -222,7 +222,7 @@ select:focus,
 textarea:focus {
     outline: none;
     border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2); 
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
 }
 
 textarea {
@@ -281,21 +281,6 @@ select.invalid {
     border-color: var(--color-error) !important;
 }
 
-#form-feedback {
-    min-height: 1.5em;
-    text-align: center;
-    font-weight: 500;
-    font-size: 1.1rem;
-}
-
-.feedback-success {
-    color: var(--color-success);
-}
-
-.feedback-error {
-    color: var(--color-error);
-}
-
 .filtros-lista {
     display: flex;
     flex-wrap: wrap;
@@ -313,7 +298,7 @@ select.invalid {
     text-align: center;
     padding: 2rem;
     color: var(--color-text-secondary);
-    background-color: var(--color-bg); 
+    background-color: var(--color-bg);
     border-radius: var(--border-radius-md);
 }
 
@@ -342,7 +327,7 @@ select.invalid {
 .task-comentarios {
     font-style: italic;
     font-size: 0.9rem;
-    background-color: #f9f9f9; 
+    background-color: #f9f9f9;
     padding: 0.8rem;
     border-radius: 4px;
     border-left: 2px solid var(--color-accent);
@@ -376,11 +361,11 @@ select.invalid {
 footer {
     text-align: center;
     padding: 2rem;
-    background-color: var(--color-accent); 
+    background-color: var(--color-accent);
     color: #ffffff;
     font-size: 0.9rem;
     width: 100%;
-    margin-top: 2rem; 
+    margin-top: 2rem;
 }
 
 .hidden {
